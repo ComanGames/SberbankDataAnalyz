@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace ConvertCsvDb
 {
@@ -18,6 +17,7 @@ namespace ConvertCsvDb
            _stopwatch = new Stopwatch();
 
             LogAction?.Invoke($"Start {_opertionText}",_tabsCount);
+            LogAction?.Invoke($"",_tabsCount);
             _stopwatch.Start();
 
         }
@@ -27,7 +27,8 @@ namespace ConvertCsvDb
            _stopwatch.Stop();
             if (LogAction != null)
             {
-               LogAction.Invoke($"Done {_opertionText}",_tabsCount); 
+               LogAction.Invoke($"Done {_opertionText}",_tabsCount);
+                LogAction.Invoke("", _tabsCount);
                 LogAction.Invoke($"It taked {_stopwatch.ElapsedMilliseconds/1000.0} seconds",_tabsCount);
                 LogAction.Invoke("",_tabsCount);
             }

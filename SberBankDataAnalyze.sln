@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertCsvDb", "ConvertCsvD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTools", "DataTools\DataTools.csproj", "{5F5387E4-3177-47B6-928A-72A50B9B8CCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5F5387E4-3177-47B6-928A-72A50B9B8CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F5387E4-3177-47B6-928A-72A50B9B8CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F5387E4-3177-47B6-928A-72A50B9B8CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

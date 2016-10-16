@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using static System.Console;
 
 namespace ConvertCsvDb
@@ -9,16 +8,28 @@ namespace ConvertCsvDb
         static void Main()
         {
             OutputEncoding = Encoding.UTF8;
+            CursorVisible = false;
 
-            Action<string,int> logWriteLine = (text, tabs) => { WriteLine($"new string('\t',tabs){text}"); };
-            Action<string,int> logReWriteLine = (text, tabs) =>
+            CsvToDb.LogWriteLine = (text, tabs) =>
             {
-
-                SetCursorPosition(0, Console.CursorTop-1);
-                WriteLine($"new string('\t',tabs){text}");
+                WriteLine($"{new string('\t',tabs)}{text}");
             };
 
+            CsvToDb.LogReWriteLine = (text, tabs) =>
+            {
+
+                SetCursorPosition(0, CursorTop-1);
+                WriteLine($"{new  string('\t',tabs)} {text}");
+            };
+
+            WriteLine("Start converting csv to Db");
+
             CsvToDb.ConvertAllData();
+
+            WriteLine("Done converting csv to Db");
+            WriteLine();
+            WriteLine("If you want to run db test press Enter if not close app");
+            ReadKey();
 
             CsvToDb.TestDbSpeed();
 
