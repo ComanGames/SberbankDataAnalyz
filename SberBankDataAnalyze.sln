@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SberBankDataAnalyze", "SberBankDataAnalyze\SberBankDataAnalyze.csproj", "{DCEEF70D-CE15-401D-8E6F-959BF7119F1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertCsvDb", "ConvertCsvDb\ConvertCsvDb.csproj", "{4A25163A-7B3B-4B9B-BD9C-DF8574C22B3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTools", "DataTools\DataTools.csproj", "{5F5387E4-3177-47B6-928A-72A50B9B8CCA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCEEF70D-CE15-401D-8E6F-959BF7119F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCEEF70D-CE15-401D-8E6F-959BF7119F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCEEF70D-CE15-401D-8E6F-959BF7119F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCEEF70D-CE15-401D-8E6F-959BF7119F1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A25163A-7B3B-4B9B-BD9C-DF8574C22B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A25163A-7B3B-4B9B-BD9C-DF8574C22B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A25163A-7B3B-4B9B-BD9C-DF8574C22B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A25163A-7B3B-4B9B-BD9C-DF8574C22B3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F5387E4-3177-47B6-928A-72A50B9B8CCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F5387E4-3177-47B6-928A-72A50B9B8CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F5387E4-3177-47B6-928A-72A50B9B8CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F5387E4-3177-47B6-928A-72A50B9B8CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
