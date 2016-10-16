@@ -67,9 +67,7 @@
     <None Include="Materials\customers_gender_train.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Materials\transactions.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Materials\transactions.csv" />
     <None Include="Materials\tr_mcc_codes.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
