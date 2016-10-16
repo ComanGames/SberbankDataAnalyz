@@ -20,13 +20,25 @@ namespace ConvertCsvDb
 
             OperationInfo.LogAction = LogWriteLine;
 
+            //Cleaning db 
             CreateDb();
 
-            using (new OperationInfo("Read All csv and puting to Db ",0))
-            {
-                ConvertMcc();
-            }
+            //Getting data from CSV
+            List<MccCode> mccCodes;
 
+            using (new OperationInfo($"Reading from {MccCodeFile}",1))
+                mccCodes = GetDataFromCsv(";", TypeReader.GetMccCode, PathToLocalFile(MccCodeFile));
+
+
+            //Save all to  DB
+            using (new OperationInfo("Add mccCodes to Db and saving",1))
+            {
+                using (SberBankDbContext context = new SberBankDbContext())
+                {
+                    context.MccCodesDbSet.AddRange(mccCodes);
+                    context.SaveChanges();
+                }
+            }
         }
 
         public static void TestDbSpeed()
@@ -51,24 +63,6 @@ namespace ConvertCsvDb
             }
         }
 
-        private static void ConvertMcc()
-        {
-            List<MccCode> mccCodes;
-
-            using (new OperationInfo($"Reading from {MccCodeFile}",1))
-                mccCodes = GetDataFromCsv(";", TypeReader.GetMccCode, PathToDateFile(MccCodeFile));
-
-
-            using (new OperationInfo("Add mccCodes to Db and saving",1))
-            {
-                using (SberBankDbContext context = new SberBankDbContext())
-                {
-                    context.MccCodesDbSet.AddRange(mccCodes);
-                    context.SaveChanges();
-                }
-            }
-        }
-
         private static void CreateDb()
         {
             using (new OperationInfo("Creating Db and removing old",1))
@@ -77,6 +71,8 @@ namespace ConvertCsvDb
 
         private static List<T> GetDataFromCsv<T>(string configurationDelimiter, Func<CsvReader,T>readDataLine, string pathToFile)
         {
+            if (!File.Exists(pathToFile))
+                throw new Exception($"File dosen't exit try to change path to file \"{pathToFile}\"");
             List<T> mccCodes = new List<T>();
             StreamReader textReader = new StreamReader(pathToFile);
             CsvReader csv = new CsvReader(textReader);
@@ -88,7 +84,7 @@ namespace ConvertCsvDb
             return mccCodes;
         }
 
-        private static string PathToDateFile(string fileName)
+        private static string PathToLocalFile(string fileName)
         {
             return Path.Combine(Environment.CurrentDirectory, @"Materials\", fileName);
         }
