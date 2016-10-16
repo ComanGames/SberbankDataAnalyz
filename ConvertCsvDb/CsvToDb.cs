@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
-using CsvHelper;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using DataTools;
 using static ConvertCsvDb.TypeReader;
 
@@ -11,6 +13,9 @@ namespace ConvertCsvDb
 {
     public static class CsvToDb
     {
+        public static int CoreCount = 4;
+        public const int LineCountToDevide = 1048576;
+        public const int BlockSize = 1024;
         public const string MccCodeFile = "tr_mcc_codes.csv";
         public const string TransactionTypeFile = "tr_types.csv";
         public const string CustomerGenderTrainFile = "customers_gender_train.csv";
@@ -33,25 +38,35 @@ namespace ConvertCsvDb
             string pathToTransactionTypeCsv = PathToDateFile(TransactionTypeFile);
             string pathToGenderFile = PathToDateFile(CustomerGenderTrainFile);
 
-            List<MccCode> mccCodes;
-            List<TransactionType> transactionTypes;
-            List<Customer> customers;
-            List<Transaction> transactions;
+            MccCode[] mccCodes;
+            TransactionType[] transactionTypes;
+            Customer[] customers;
+            Transaction[] transactions;
 
             using (new OperationInfo("Read All csv ", 0))
             {
                 using (new OperationInfo($"Reading from {MccCodeFile}", 1))
-                    mccCodes = GetDataFromCsv(";", GetMccCode, pathToMccCsv);
+                    mccCodes = GetDataFromCsv(';', GetMccCode, pathToMccCsv);
 
                 using (new OperationInfo($"Reading from {TransactionTypeFile}", 1))
-                    transactionTypes = GetDataFromCsv(";", GetTransactionType, pathToTransactionTypeCsv);
+                    transactionTypes = GetDataFromCsv(';', GetTransactionType, pathToTransactionTypeCsv);
 
                 using (new OperationInfo($"Reading from {CustomerGenderTrainFile}", 1))
-                    customers = GetDataFromCsv(",", GetCustomerWithGender, pathToGenderFile);
+                    customers = GetDataFromCsv(',', GetCustomerWithGender, pathToGenderFile);
 
                 using (new OperationInfo($"Reading from {Path.GetFileName(PathToTransactionFile)}", 1))
-                    transactions = GetDataFromCsv(",", GetTransaction, PathToTransactionFile);
+                    transactions = GetDataFromCsv(',', GetTransaction, PathToTransactionFile);
             }
+            Cleaning();
+            using (new OperationInfo("Add Data to db",0))
+            {
+                AddToDb(mccCodes, transactionTypes, customers, transactions);
+            }
+
+        }
+
+        private static void Cleaning()
+        {
             LogWriteLine("================================================================", 0);
             using (new OperationInfo("Cleaning memory", 1))
             {
@@ -59,38 +74,76 @@ namespace ConvertCsvDb
             }
             LogWriteLine("================================================================", 0);
             LogWriteLine("", 0);
-            using (new OperationInfo("Add Data to db",0))
+        }
+
+        private  static void AddToDb(MccCode[] mccCodes, TransactionType[] transactionTypes, Customer[] customers, Transaction[] transactions)
+        {
+            using (SberBankDbContext context = new SberBankDbContext())
             {
-                using (SberBankDbContext context = new SberBankDbContext())
+                using (new OperationInfo("Add mccCodes table to Db", 1))
+                    context.MccCodesDbSet.AddRange(mccCodes);
+                using (new OperationInfo("Saving Changes to Db", 2))
+                     context.SaveChanges();
+
+                using (new OperationInfo("Add Transaction Type table to Db", 1))
+                    context.TransactionTypesDbSet.AddRange(transactionTypes);
+                using (new OperationInfo("Saving Changes to Db", 2))
+                    context.SaveChanges();
+
+
+                using (new OperationInfo("Add customers with Gender table to Db", 1))
+                    context.CustomersDbSet.AddRange(customers);
+                using (new OperationInfo("Saving Changes  to Db", 2))
+                    context.SaveChanges();
+
+            }
+
+
+            Cleaning();
+
+                using (new OperationInfo("Add Transactions table to Db and Saving", 1))
                 {
-                    using (new OperationInfo("Add mccCodes table to Db",1))
-                        context.MccCodesDbSet.AddRange(mccCodes);
-                    using (new OperationInfo("Saving Changes to Db", 2))
-                        context.SaveChangesAsync();
+                    Transaction[] result = transactions;
+                    int threadStep = result.Length / (3);
+                    int dataStep = 1024;
 
-                    using (new OperationInfo("Add Transaction Type table to Db",1))
-                        context.TransactionTypesDbSet.AddRange(transactionTypes);
-                    using (new OperationInfo("Saving Changes to Db", 2))
-                        context.SaveChangesAsync();
+                    var countOfThreds = (result.Length / threadStep) + 1;
+                    Thread[] threads = new Thread[countOfThreds];
+
+                    using (ProcentCalc progress= new ProcentCalc((transactions.Length/dataStep) + 1, LogWriteLine, LogReWriteLine))
+                    {
+                        for (int i = 0; i < countOfThreds; i++)
+                        {
+                            LogWriteLine($"Thread index{i}", 4);
+                                int x = i*threadStep;
+                                int max = (x + threadStep < result.Length) ? x + threadStep : result.Length;
+                            using (SberBankDbContext context = new SberBankDbContext())
+                            {
+                                for (int j = x; j < max; j++)
+                                {
+                                    context.TransactionsDbSet.Add(transactions[j]);
+                                    LogReWriteLine($"j={j}", 3);
 
 
-                    using (new OperationInfo("Add customers with Gender table to Db", 1))
-                        context.CustomersDbSet.AddRange(customers);
-                    using (new OperationInfo("Saving Changes  to Db", 2))
-                        context.SaveChangesAsync();
+                                    if (j % dataStep==0)
+                                    {
+                                        context.SaveChanges();
+                                        LogReWriteLine("", 0);
+                                        progress.Update();
+                                    }
+
+                                }
 
 
-                    using (new OperationInfo("Add Transactions table to Db", 1))
-                        context.TransactionsDbSet.AddRange(transactions);
+                            }
+                        }
 
-                    using(new OperationInfo("Saving Changes to Db",2)) 
-                        context.SaveChangesAsync();
-                    
-                    }
+                        }
+
 
                 }
 
-        }
+            }
 
         public static void TestDbSpeed()
         {
@@ -120,53 +173,90 @@ namespace ConvertCsvDb
                 Database.SetInitializer(new DropCreateDatabaseAlways<SberBankDbContext>());
         }
 
-        private static List<T> GetDataFromCsv<T>(string configurationDelimiter, Func<CsvReader,T>readDataLine, string pathToFile)
+        public static SynchronizationContext sc;
+        private static T[] GetDataFromCsv<T>(char delimiter, Func<string[],T>readDataLine, string pathToFile)
         {
+            sc=SynchronizationContext.Current;
             if(!File.Exists(pathToFile))
                 throw new Exception($"Please reset path to file {pathToFile}");
-            double countOfLines = 0;
-            double currentLine = 0;
-            int procent = 0;
-            if (IsReadingProgress)
-            {
-                countOfLines = File.ReadAllLines(pathToFile).Length;
-                LogWriteLine("", 2);
-                LogWriteLine($"{countOfLines} lines in { Path.GetFileName(pathToFile)}", 2);
 
-                LogWriteLine("", 2);
-                LogWriteLine(" Reading In Progress ", 2);
-
-                LogWriteLine("", 2);
-                LogWriteLine($"{0}%", 2);
-
-            }
-
-            List<T> mccCodes = new List<T>();
             StreamReader textReader = new StreamReader(pathToFile);
-            CsvReader csv = new CsvReader(textReader);
-            csv.Configuration.Delimiter = configurationDelimiter;
-           
-            while (csv.Read())
+
+            string[] allLines = new string[0];
+
+            allLines = File.ReadAllLines(pathToFile);
+
+
+            int linesCount = allLines.Length;
+            LogWriteLine($"{linesCount} lines", 2);
+            LogWriteLine("", 2);
+
+             T[] result = new T[linesCount-1];
+            int step = result.Length/(3);
+
+//                Parallel.For(0, (result.Length/step) + 1, (i) =>
+
+            var countOfThreds = (result.Length/step)+1;
+            Task[] threads = new Task[countOfThreds];
+            for (int i = 0; i < countOfThreds; i++)
+            { 
+                        int x = i*step;
+                        int max = (x + step < result.Length) ? x + step : result.Length;
+                        for (int j = x; j < max; j++)
+                        {
+                                result[j] = readDataLine(allLines[j + 1].Split(delimiter));
+                        }
+//                            result[i] = readdataline(alllines[i+1].split(delimiter));
+
+            };
+
+
+            return result;
+            }
+
+        private static async Task<List<T>> LineToDataAsync<T>(string[] allLines, string delimiter, Func<string[], T> readDataLine, Action progressUpdate)
+        {
+
+            List<string[]> listOfArray=  allLines
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index /(allLines.Length/CoreCount))
+                .Select(x => x.Select(v => v.Value).ToArray())
+                .ToList();
+
+            Task<List<T>>[] listOfTask = new Task<List<T>>[listOfArray.Count];
+
+                LogWriteLine($"List of array count {listOfArray.Count}", 0);
+                LogWriteLine($"", 0);
+                LogWriteLine($"", 0);
+            for (int i = 0; i < listOfArray.Count; i++)
             {
-                mccCodes.Add(readDataLine(csv));
-                if (IsReadingProgress)
+                listOfTask[i]=new Task<List<T>>( (list) =>
                 {
-                    int newProcent =(int)(((++currentLine)/countOfLines)*100);
-                    if (newProcent != procent)
-                    {
-                        procent = newProcent;
-                        LogReWriteLine($"{newProcent}%", 2);
-                    }
-                }
+                    string[] listData = (string[])list; 
+                    return LineToData<T>(listData,delimiter,readDataLine,()=> {});
+                }, listOfArray[i]);
             }
-            if (IsReadingProgress)
+            LogReWriteLine("Waiting for all tasks", 0);
+            for (int i = 0; i < listOfTask.Length; i++)
             {
-                LogReWriteLine($"{100}%", 2);
-                
-                LogWriteLine(" ", 2);
+                listOfTask[i].Start();
             }
-            return mccCodes;
+            Task.WaitAll(listOfTask);
+
+            return null;
         }
+
+        private static List<T> LineToData<T>(string[] allLines, string delimiter, Func<string[], T> readDataLine,Action progressUpdate)
+        {
+            List<T> resultData = new List<T>();
+                for (int i = 0; i < allLines.Length; i++)
+                {
+                    resultData.Add(readDataLine(Regex.Split(allLines[i], delimiter)));
+                    progressUpdate();
+                }
+            return resultData;
+        }
+
 
         private static string PathToDateFile(string fileName)
         {

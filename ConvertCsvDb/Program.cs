@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using static System.Console;
 
 namespace ConvertCsvDb
@@ -21,6 +22,12 @@ namespace ConvertCsvDb
                 SetCursorPosition(0, CursorTop-1);
                 WriteLine($"{new  string('\t',tabs)} {text}");
             };
+
+            CsvToDb.CoreCount = Environment.ProcessorCount;
+            WriteLine($"Detected {CsvToDb.CoreCount} cores.Done Initialization...");
+            WriteLine();
+            WriteLine("Press enter to get data from csv files...");
+            WriteLine();
 
             WriteLine("Start converting csv to Db");
 
