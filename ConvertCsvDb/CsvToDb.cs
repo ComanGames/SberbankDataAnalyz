@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using DataTools;
 using EntityFramework.BulkInsert.Extensions;
 using static ConvertCsvDb.TypeReader;
@@ -17,7 +11,7 @@ namespace ConvertCsvDb
     public static class CsvToDb
     {
         public static int CoreCount = 4;
-        public const int _1024x1024 = 1048576;
+        public const int MbxMb = 1048576;
         public const int BlockSize = 1024;
         public const string MccCodeFile = "tr_mcc_codes.csv";
         public const string TransactionTypeFile = "tr_types.csv";
@@ -29,61 +23,28 @@ namespace ConvertCsvDb
         public static Action<string,int> LogReWriteLine = (x,y)=>{};
 
 
-        public static void ReadingFromFileSpeedTest()
+        private static void BullingToDb<T>(T[] transactions, int startPoint=0, int itemsToDrop=0)
         {
-            Transaction[] transactions;
-            string fileName = Path.GetFileName(PathToTransactionFile);
-            using (new OperationInfo($"Reading from {fileName}", 1))
-                transactions = GetDataFromCsv(',', GetTransaction, PathToTransactionFile);
-
             using (SberBankDbContext context = new SberBankDbContext())
             {
-                using (new OperationInfo($"Bulling 500,000 Transaction[] to db", 1))
+                using (new OperationInfo($"Bulling {itemsToDrop} Transaction[] to db", 1))
                 {
                     context.Configuration.AutoDetectChangesEnabled = false;
                     context.Configuration.ValidateOnSaveEnabled = false;
-                    context.BulkInsert(transactions.SubArray(0, 500000));
+
+                    context.BulkInsert(itemsToDrop != 0 ? transactions.SubArray(startPoint, itemsToDrop) : transactions);
                 }
-                using (new OperationInfo($"Saving changes to db", 1))
-                {
+                using (new OperationInfo($"Saving Changes of dropping {itemsToDrop}", 1))
                     context.SaveChanges();
-                }
             }
-
-        }
-
-
-        private static
-            void BinaryFormation(string fileName, Transaction[] transactions)
-        {
-            string datFileName = Path.GetFileNameWithoutExtension(PathToTransactionFile) + ".data";
-
-            BinaryFormatter bf = new BinaryFormatter();
-            string binaryFile = PathToDateFile(datFileName);
-
-            using (new OperationInfo($"Converting {fileName} to {datFileName}", 1))
-            {
-                using (FileStream stream = File.Create(binaryFile))
-                    bf.Serialize(stream, transactions);
-            }
-            transactions = null;
-            Cleaning();
-
-
-            using (new OperationInfo($"Reading from {datFileName}", 1))
-            {
-                using (FileStream stream = File.Open(binaryFile, FileMode.Open))
-                    transactions = (Transaction[]) bf.Deserialize(stream);
-            }
-            LogWriteLine(transactions.Length.ToString(), 2);
         }
 
         public static void ConvertAllData()
         {
+            using (new OperationInfo("Creating db",0))
+                CreateDb();
 
             OperationInfo.LogAction = LogWriteLine;
-
-            CreateDb();
 
             //Loading all data
 
@@ -131,70 +92,17 @@ namespace ConvertCsvDb
 
         private  static void AddToDb(MccCode[] mccCodes, TransactionType[] transactionTypes, Customer[] customers, Transaction[] transactions)
         {
-            using (SberBankDbContext context = new SberBankDbContext())
-            {
                 using (new OperationInfo("Add mccCodes table to Db", 1))
-                    context.MccCodesDbSet.AddRange(mccCodes);
-                using (new OperationInfo("Saving Changes to Db", 2))
-                     context.SaveChanges();
+                    BullingToDb(mccCodes);
 
                 using (new OperationInfo("Add Transaction Type table to Db", 1))
-                    context.TransactionTypesDbSet.AddRange(transactionTypes);
-                using (new OperationInfo("Saving Changes to Db", 2))
-                    context.SaveChanges();
-
+                    BullingToDb(transactionTypes);
 
                 using (new OperationInfo("Add customers with Gender table to Db", 1))
-                    context.CustomersDbSet.AddRange(customers);
-                using (new OperationInfo("Saving Changes  to Db", 2))
-                    context.SaveChanges();
+                    BullingToDb(customers);
 
-            }
-
-
-            Cleaning();
-
-                using (new OperationInfo("Add Transactions table to Db and Saving", 1))
-                {
-                    Transaction[] result = transactions;
-                    int threadStep = result.Length / (3);
-                    int dataStep = 1024;
-
-                    var countOfThreds = (result.Length / threadStep) + 1;
-                    Thread[] threads = new Thread[countOfThreds];
-
-                    using (ProgressCount progress= new ProgressCount((transactions.Length/dataStep) + 1))
-                    {
-                        for (int i = 0; i < countOfThreds; i++)
-                        {
-                            LogWriteLine($"Thread index{i}", 4);
-                                int x = i*threadStep;
-                                int max = (x + threadStep < result.Length) ? x + threadStep : result.Length;
-                            using (SberBankDbContext context = new SberBankDbContext())
-                            {
-                                for (int j = x; j < max; j++)
-                                {
-                                    context.TransactionsDbSet.Add(transactions[j]);
-                                    LogReWriteLine($"j={j}", 3);
-
-
-                                    if (j % dataStep==0)
-                                    {
-                                        context.SaveChanges();
-                                        LogReWriteLine("", 0);
-                                        progress.Update();
-                                    }
-
-                                }
-
-
-                            }
-                        }
-
-                        }
-
-
-                }
+                using (new OperationInfo("Add Transactions", 1))
+                    BullingToDb(transactions);
 
             }
 
@@ -220,7 +128,7 @@ namespace ConvertCsvDb
             }
         }
 
-        private static void CreateDb()
+        public static void CreateDb()
         {
             using (new OperationInfo("Creating Db and removing old",0))
                 Database.SetInitializer(new DropCreateDatabaseAlways<SberBankDbContext>());
@@ -241,7 +149,7 @@ namespace ConvertCsvDb
             LogWriteLine("", 2);
 
             float fileSizeBytes = new FileInfo(pathToFile).Length;
-            float fileSizeInMb =(float) ((int)((fileSizeBytes/_1024x1024)*100))/100.0f;
+            float fileSizeInMb = ((int)((fileSizeBytes/MbxMb)*100))/100.0f;
             LogWriteLine($"File Size is { fileSizeInMb} MB",2);
             LogWriteLine("", 2);
 
@@ -259,50 +167,6 @@ namespace ConvertCsvDb
 
                 return result;
             }
-
-        private static async Task<List<T>> LineToDataAsync<T>(string[] allLines, string delimiter, Func<string[], T> readDataLine, Action progressUpdate)
-        {
-
-            List<string[]> listOfArray=  allLines
-                .Select((x, i) => new { Index = i, Value = x })
-                .GroupBy(x => x.Index /(allLines.Length/CoreCount))
-                .Select(x => x.Select(v => v.Value).ToArray())
-                .ToList();
-
-            Task<List<T>>[] listOfTask = new Task<List<T>>[listOfArray.Count];
-
-                LogWriteLine($"List of array count {listOfArray.Count}", 0);
-                LogWriteLine($"", 0);
-                LogWriteLine($"", 0);
-            for (int i = 0; i < listOfArray.Count; i++)
-            {
-                listOfTask[i]=new Task<List<T>>( (list) =>
-                {
-                    string[] listData = (string[])list; 
-                    return LineToData<T>(listData,delimiter,readDataLine,()=> {});
-                }, listOfArray[i]);
-            }
-            LogReWriteLine("Waiting for all tasks", 0);
-            for (int i = 0; i < listOfTask.Length; i++)
-            {
-                listOfTask[i].Start();
-            }
-            Task.WaitAll(listOfTask);
-
-            return null;
-        }
-
-        private static List<T> LineToData<T>(string[] allLines, string delimiter, Func<string[], T> readDataLine,Action progressUpdate)
-        {
-            List<T> resultData = new List<T>();
-                for (int i = 0; i < allLines.Length; i++)
-                {
-                    resultData.Add(readDataLine(Regex.Split(allLines[i], delimiter)));
-                    progressUpdate();
-                }
-            return resultData;
-        }
-
 
         private static string PathToDateFile(string fileName)
         {

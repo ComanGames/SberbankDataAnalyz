@@ -29,12 +29,9 @@ namespace ConvertCsvDb
             
 
             CsvToDb.CoreCount = Environment.ProcessorCount;
-
-            CsvToDb.ReadingFromFileSpeedTest();
-
-            ReadKey();
-            return;
             RealConverting();
+            ReadKey();
+
         }
 
         private static void RealConverting()
