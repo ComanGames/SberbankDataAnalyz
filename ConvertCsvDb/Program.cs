@@ -23,7 +23,22 @@ namespace ConvertCsvDb
                 WriteLine($"{new  string('\t',tabs)} {text}");
             };
 
+            OperationInfo.LogAction = CsvToDb.LogWriteLine;
+            ProgressCount.LogWriteLine = CsvToDb.LogWriteLine;
+            ProgressCount.LogReWriteLine = CsvToDb.LogReWriteLine;
+            
+
             CsvToDb.CoreCount = Environment.ProcessorCount;
+
+            CsvToDb.ReadingFromFileSpeedTest();
+
+            ReadKey();
+            return;
+            RealConverting();
+        }
+
+        private static void RealConverting()
+        {
             WriteLine($"Detected {CsvToDb.CoreCount} cores.Done Initialization...");
             WriteLine();
             WriteLine("Press enter to get data from csv files...");
@@ -40,7 +55,6 @@ namespace ConvertCsvDb
 
             CsvToDb.TestDbSpeed();
 
-            ReadKey();
         }
     }
 

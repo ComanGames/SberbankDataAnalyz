@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DataTools;
+using EntityFramework.BulkInsert.Extensions;
 using static ConvertCsvDb.TypeReader;
 
 namespace ConvertCsvDb
@@ -14,7 +17,7 @@ namespace ConvertCsvDb
     public static class CsvToDb
     {
         public static int CoreCount = 4;
-        public const int LineCountToDevide = 1048576;
+        public const int _1024x1024 = 1048576;
         public const int BlockSize = 1024;
         public const string MccCodeFile = "tr_mcc_codes.csv";
         public const string TransactionTypeFile = "tr_types.csv";
@@ -24,6 +27,56 @@ namespace ConvertCsvDb
         public static bool IsReadingProgress = true;
         public static Action<string,int> LogWriteLine = (x,y)=>{};
         public static Action<string,int> LogReWriteLine = (x,y)=>{};
+
+
+        public static void ReadingFromFileSpeedTest()
+        {
+            Transaction[] transactions;
+            string fileName = Path.GetFileName(PathToTransactionFile);
+            using (new OperationInfo($"Reading from {fileName}", 1))
+                transactions = GetDataFromCsv(',', GetTransaction, PathToTransactionFile);
+
+            using (SberBankDbContext context = new SberBankDbContext())
+            {
+                using (new OperationInfo($"Bulling 500,000 Transaction[] to db", 1))
+                {
+                    context.Configuration.AutoDetectChangesEnabled = false;
+                    context.Configuration.ValidateOnSaveEnabled = false;
+                    context.BulkInsert(transactions.SubArray(0, 500000));
+                }
+                using (new OperationInfo($"Saving changes to db", 1))
+                {
+                    context.SaveChanges();
+                }
+            }
+
+        }
+
+
+        private static
+            void BinaryFormation(string fileName, Transaction[] transactions)
+        {
+            string datFileName = Path.GetFileNameWithoutExtension(PathToTransactionFile) + ".data";
+
+            BinaryFormatter bf = new BinaryFormatter();
+            string binaryFile = PathToDateFile(datFileName);
+
+            using (new OperationInfo($"Converting {fileName} to {datFileName}", 1))
+            {
+                using (FileStream stream = File.Create(binaryFile))
+                    bf.Serialize(stream, transactions);
+            }
+            transactions = null;
+            Cleaning();
+
+
+            using (new OperationInfo($"Reading from {datFileName}", 1))
+            {
+                using (FileStream stream = File.Open(binaryFile, FileMode.Open))
+                    transactions = (Transaction[]) bf.Deserialize(stream);
+            }
+            LogWriteLine(transactions.Length.ToString(), 2);
+        }
 
         public static void ConvertAllData()
         {
@@ -110,7 +163,7 @@ namespace ConvertCsvDb
                     var countOfThreds = (result.Length / threadStep) + 1;
                     Thread[] threads = new Thread[countOfThreds];
 
-                    using (ProcentCalc progress= new ProcentCalc((transactions.Length/dataStep) + 1, LogWriteLine, LogReWriteLine))
+                    using (ProgressCount progress= new ProgressCount((transactions.Length/dataStep) + 1))
                     {
                         for (int i = 0; i < countOfThreds; i++)
                         {
@@ -173,45 +226,38 @@ namespace ConvertCsvDb
                 Database.SetInitializer(new DropCreateDatabaseAlways<SberBankDbContext>());
         }
 
-        public static SynchronizationContext sc;
         private static T[] GetDataFromCsv<T>(char delimiter, Func<string[],T>readDataLine, string pathToFile)
         {
-            sc=SynchronizationContext.Current;
             if(!File.Exists(pathToFile))
                 throw new Exception($"Please reset path to file {pathToFile}");
 
-            StreamReader textReader = new StreamReader(pathToFile);
+            string[] allLines;
 
-            string[] allLines = new string[0];
-
-            allLines = File.ReadAllLines(pathToFile);
-
+            using(new OperationInfo("Reading text from file",2))
+                allLines = File.ReadAllLines(pathToFile);
 
             int linesCount = allLines.Length;
             LogWriteLine($"{linesCount} lines", 2);
             LogWriteLine("", 2);
 
-             T[] result = new T[linesCount-1];
-            int step = result.Length/(3);
+            float fileSizeBytes = new FileInfo(pathToFile).Length;
+            float fileSizeInMb =(float) ((int)((fileSizeBytes/_1024x1024)*100))/100.0f;
+            LogWriteLine($"File Size is { fileSizeInMb} MB",2);
+            LogWriteLine("", 2);
 
-//                Parallel.For(0, (result.Length/step) + 1, (i) =>
+            T[] result = new T[linesCount-1];
 
-            var countOfThreds = (result.Length/step)+1;
-            Task[] threads = new Task[countOfThreds];
-            for (int i = 0; i < countOfThreds; i++)
-            { 
-                        int x = i*step;
-                        int max = (x + step < result.Length) ? x + step : result.Length;
-                        for (int j = x; j < max; j++)
-                        {
-                                result[j] = readDataLine(allLines[j + 1].Split(delimiter));
-                        }
-//                            result[i] = readdataline(alllines[i+1].split(delimiter));
+            using (ProgressCount progress = new ProgressCount(result.Length))
+            {
 
-            };
+                for (int i = 0; i < result.Length; i++)
+                {
+                    result[i] = readDataLine(allLines[i + 1].Split(delimiter));
+                    progress.Update();
+                }
+            }
 
-
-            return result;
+                return result;
             }
 
         private static async Task<List<T>> LineToDataAsync<T>(string[] allLines, string delimiter, Func<string[], T> readDataLine, Action progressUpdate)

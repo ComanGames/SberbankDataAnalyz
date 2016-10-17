@@ -4,7 +4,7 @@ namespace DataTools
 {
     public class SberBankDbContext:DbContext
     {
-        public SberBankDbContext():base("SberBankDataBaseConnectionString")
+        public SberBankDbContext():base("")
         {
         }
 

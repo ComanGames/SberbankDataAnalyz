@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
 
 namespace ConvertCsvDb
 {
-    public class ProcentCalc :IDisposable
+    public class ProgressCount :IDisposable
     {
         private readonly double _countOfOperations;
         private double _currentLine;
@@ -13,11 +12,9 @@ namespace ConvertCsvDb
         public static bool IsReadingProgress = true;
 
 
-        public ProcentCalc(int countOfOperations,Action<string,int>logWriteLine,Action<string,int>logReWriteLine)
+        public ProgressCount(int countOfOperations)
         {
             _countOfOperations = countOfOperations;
-            LogWriteLine = logWriteLine;
-            LogReWriteLine = logReWriteLine;
 
             if (IsReadingProgress)
             {
