@@ -4,7 +4,7 @@ namespace DataTools
 {
     public class SberBankDbContext:DbContext
     {
-        public SberBankDbContext():base(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename='C:\Users\coman\OneDrive\Documents\Visual Studio 2015\Projects\SberBankDataAnalyze\DataTools\Data\SberBankData.mdf';Integrated Security=True")
+        public SberBankDbContext():base(@"Data Source=sber-bank.database.windows.net;Initial Catalog=SberBankDb;Integrated Security=False;User ID=Yura;Password=Train2brain4;Connect Timeout=15;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
         {
         }
 

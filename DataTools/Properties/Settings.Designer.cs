@@ -23,14 +23,18 @@ namespace DataTools.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Data\\SberBank" +
-            "Data.mdf;Integrated Security=True")]
-        public string SberBankDataConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=sber-bank.database.windows.net;Initial Catalog=SberBankDb;Integrated " +
+            "Security=False;User ID=Yura;Password=Train2brain4;Connect Timeout=60;Encrypt=Fal" +
+            "se;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=F" +
+            "alse")]
+        public string SberBankCS {
             get {
-                return ((string)(this["SberBankDataConnectionString"]));
+                return ((string)(this["SberBankCS"]));
+            }
+            set {
+                this["SberBankCS"] = value;
             }
         }
     }
