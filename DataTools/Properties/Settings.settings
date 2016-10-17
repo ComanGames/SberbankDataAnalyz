@@ -5,5 +5,8 @@
     <Setting Name="SberBankCS" Type="System.String" Scope="User">
       <Value Profile="(Default)">Data Source=sber-bank.database.windows.net;Initial Catalog=SberBankDb;Integrated Security=False;User ID=Yura;Password=Train2brain4;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False</Value>
     </Setting>
+    <Setting Name="SberBankPreditionModel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data Source=sber-bank.database.windows.net;Initial Catalog=SberBankPredictionModelDb;Integrated Security=False;User ID=Yura;Password=Train2brain4;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

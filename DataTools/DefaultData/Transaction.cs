@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataTools
+namespace DataTools.DefaultData
 {
     [Serializable]
     public class Transaction

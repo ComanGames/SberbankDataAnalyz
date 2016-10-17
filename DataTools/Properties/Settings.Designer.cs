@@ -37,5 +37,17 @@ namespace DataTools.Properties {
                 this["SberBankCS"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"Data Source=sber-bank.database.windows.net;Initial Catalog=SberBankPredictionModelDb;Integrated Security=False;User ID=Yura;Password=Train2brain4;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")]
+        public string SberBankPreditionModel {
+            get {
+                return ((string)(this["SberBankPreditionModel"]));
+            }
+            set {
+                this["SberBankPreditionModel"] = value;
+            }
+        }
     }
 }

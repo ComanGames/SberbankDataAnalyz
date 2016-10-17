@@ -1,11 +1,12 @@
 ﻿using System.Data.Entity;
 
-namespace DataTools
+namespace DataTools.DefaultData
 {
     public class SberBankDbContext:DbContext
     {
-        public SberBankDbContext():base(@"Data Source=sber-bank.database.windows.net;Initial Catalog=SberBankDb;Integrated Security=False;User ID=Yura;Password=Train2brain4;Connect Timeout=15;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
+        public SberBankDbContext():base(Properties.Settings.Default.SberBankCS)
         {
+
         }
 
         public DbSet<Customer> CustomersDbSet { get; set; }

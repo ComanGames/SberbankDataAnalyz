@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using DataTools;
+using DataTools.DefaultData;
 using EntityFramework.BulkInsert.Extensions;
 using static ConvertCsvDb.TypeReader;
 

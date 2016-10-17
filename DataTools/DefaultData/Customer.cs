@@ -1,4 +1,4 @@
-﻿namespace DataTools
+﻿namespace DataTools.DefaultData
 {
     public class Customer
     {
