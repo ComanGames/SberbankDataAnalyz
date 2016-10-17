@@ -13,10 +13,11 @@ namespace ConvertCsvDb
         public static int CoreCount = 4;
         public const int MbxMb = 1048576;
         public const int BlockSize = 1024;
+        public const int StpsForBigDb = 1200;
         public const string MccCodeFile = "tr_mcc_codes.csv";
         public const string TransactionTypeFile = "tr_types.csv";
         public const string CustomerGenderTrainFile = "customers_gender_train.csv";
-        public const string PathToTransactionFile = @"C:\Users\coman\OneDrive\Documents\Visual Studio 2015\Projects\SberBankDataAnalyze\ConvertCsvDb\Materials\transactions.csv";
+        public const string PathToTransactionFile = @"C:\Users\coman\Source\Repos\SberbankDataAnalyz\ConvertCsvDb\Materials\transactions.csv";
 
         public static bool IsReadingProgress = true;
         public static Action<string,int> LogWriteLine = (x,y)=>{};
@@ -27,22 +28,16 @@ namespace ConvertCsvDb
         {
             using (SberBankDbContext context = new SberBankDbContext())
             {
-                using (new OperationInfo($"Bulling {itemsToDrop} Transaction[] to db", 1))
-                {
                     context.Configuration.AutoDetectChangesEnabled = false;
                     context.Configuration.ValidateOnSaveEnabled = false;
 
                     context.BulkInsert(itemsToDrop != 0 ? transactions.SubArray(startPoint, itemsToDrop) : transactions);
-                }
-                using (new OperationInfo($"Saving Changes of dropping {itemsToDrop}", 1))
-                    context.SaveChanges();
+
             }
         }
 
         public static void ConvertAllData()
         {
-            using (new OperationInfo("Creating db",0))
-                CreateDb();
 
             OperationInfo.LogAction = LogWriteLine;
 
@@ -90,21 +85,37 @@ namespace ConvertCsvDb
             LogWriteLine("", 0);
         }
 
-        private  static void AddToDb(MccCode[] mccCodes, TransactionType[] transactionTypes, Customer[] customers, Transaction[] transactions)
+        private static void AddToDb(MccCode[] mccCodes, TransactionType[] transactionTypes, Customer[] customers,
+            Transaction[] transactions)
         {
-                using (new OperationInfo("Add mccCodes table to Db", 1))
-                    BullingToDb(mccCodes);
+            using (new OperationInfo("Add mccCodes table to Db", 1))
+                BullingToDb(mccCodes);
 
-                using (new OperationInfo("Add Transaction Type table to Db", 1))
-                    BullingToDb(transactionTypes);
+            using (new OperationInfo("Add Transaction Type table to Db", 1))
+                BullingToDb(transactionTypes);
 
-                using (new OperationInfo("Add customers with Gender table to Db", 1))
-                    BullingToDb(customers);
+            using (new OperationInfo("Add customers with Gender table to Db", 1))
+                BullingToDb(customers);
 
-                using (new OperationInfo("Add Transactions", 1))
-                    BullingToDb(transactions);
+            using (new OperationInfo("Add Transactions", 1))
+            {
+                int stepNuber = 0;
+                using (ProgressCount progress = new ProgressCount(transactions.Length/StpsForBigDb))
+                {
 
+                    while (stepNuber < transactions.Length)
+                    {
+                        int count = (stepNuber + StpsForBigDb - 1 < transactions.Length)
+                            ? StpsForBigDb - 1
+                            : transactions.Length - stepNuber;
+                        BullingToDb(transactions.SubArray(stepNuber, count));
+                        progress.Update();
+                        stepNuber += StpsForBigDb;
+                    }
             }
+            }
+
+    }
 
         public static void TestDbSpeed()
         {
