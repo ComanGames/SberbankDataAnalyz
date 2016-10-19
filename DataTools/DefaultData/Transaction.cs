@@ -6,7 +6,6 @@ namespace DataTools.DefaultData
     [Serializable]
     public class Transaction
     {
-        [Key]
         public int Id { get; set; }
         public int BankId { get; set; }
         public ushort Day { get; set; }
@@ -16,7 +15,7 @@ namespace DataTools.DefaultData
         public short MccCode { get; set; }
         public short TransactionType { get; set; }
         public float Amount { get; set; }
-        [MaxLength(32)]
+        [MaxLength(16)]
         public string TermId { get; set; }
 
         public override string ToString()

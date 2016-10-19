@@ -50,6 +50,14 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework.BulkInsert, Version=6.0.2.8, Culture=neutral, PublicKeyToken=630a17433349cb76, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.BulkInsert-ef6.6.0.2.8\lib\Net45\EntityFramework.BulkInsert.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.MappingAPI, Version=6.0.0.7, Culture=neutral, PublicKeyToken=7ee2e825d201459e, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.MappingAPI.6.0.0.7\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
@@ -68,7 +76,16 @@
   <ItemGroup>
     <Compile Include="DefaultData\Customer.cs" />
     <Compile Include="DefaultData\GloabalData.cs" />
+    <Compile Include="LocalData\BinaryTools.cs" />
+    <Compile Include="LocalData\DataBaseUtil.cs" />
+    <Compile Include="LocalData\DataFromCsv.cs" />
+    <Compile Include="LocalData\DataWorker.cs" />
+    <Compile Include="LocalData\LocalData.cs" />
     <Compile Include="DefaultData\MccCode.cs" />
+    <Compile Include="LocalData\OperationInfo.cs" />
+    <Compile Include="LocalData\Program.cs" />
+    <Compile Include="LocalData\ProgressCount.cs" />
+    <Compile Include="LocalData\TypeReader.cs" />
     <Compile Include="Migrations\201610190159287_init.cs" />
     <Compile Include="Migrations\201610190159287_init.Designer.cs">
       <DependentUpon>201610190159287_init.cs</DependentUpon>
@@ -100,6 +117,18 @@
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Materials\customers_gender_train.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Materials\transactions.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Materials\tr_mcc_codes.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Materials\tr_types.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
