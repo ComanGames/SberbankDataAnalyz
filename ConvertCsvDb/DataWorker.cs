@@ -16,7 +16,7 @@ namespace ConvertCsvDb
         public static Action<string,int> LogReWriteLine = (x,y)=>{};
 
 
-        public static void ConvertAllData()
+        public static void ConvertAllData(string pathToTransactionFile)
         {
 
             OperationInfo.LogAction = LogWriteLine;
@@ -43,8 +43,8 @@ namespace ConvertCsvDb
                 using (new OperationInfo($"Reading from {DataFromCsv.CustomerGenderTrainFile}", 1))
                     customers = DataFromCsv.GetDataFromCsv(',', GetCustomerWithGender, pathToGenderFile);
 
-                using (new OperationInfo($"Reading from {Path.GetFileName(DataFromCsv.PathToTransactionFile)}", 1))
-                    transactions = DataFromCsv.GetDataFromCsv(',', GetTransaction, DataFromCsv.PathToTransactionFile);
+                using (new OperationInfo($"Reading from {Path.GetFileName(pathToTransactionFile)}", 1))
+                    transactions = DataFromCsv.GetDataFromCsv(',', GetTransaction, pathToTransactionFile);
             }
             Cleaning();
             using (new OperationInfo("Add Data to db",0))

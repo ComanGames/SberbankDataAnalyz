@@ -29,10 +29,10 @@ namespace ConvertCsvDb.Properties {
             "\\ConvertCsvDb\\Materials\\transactions.csv")]
         public string TransactionFile {
             get {
-                return ((string)(this["TransactionFile"]));
+                return ((string)(this["TransactionsFile"]));
             }
             set {
-                this["TransactionFile"] = value;
+                this["TransactionsFile"] = value;
             }
         }
     }

@@ -7,7 +7,27 @@ namespace ConvertCsvDb
 {
     public static class DataBaseUtil
     {
-        public const int StpsForBigDb = 12000;
+        public const int StpsForBigDb = 600000;
+
+        public static void CleanDb()
+        {
+            using (SberBankDbContext context = new SberBankDbContext())
+            {
+                using (new OperationInfo("Removing Transactions", 1))
+                    context.TransactionsDbSet.Create();
+
+                using (new OperationInfo("Removing Customers", 1))
+                    context.CustomersDbSet.Create();
+
+                using (new OperationInfo("Removing Mcc", 1))
+                    context.MccCodesDbSet.Create();
+
+                using (new OperationInfo("Removing Transactions types", 1))
+                    context.TransactionTypesDbSet.Create();
+                context.SaveChanges();
+
+            }
+        }
 
         public static void BullingToDb<T>(T[] transactions, int startPoint=0, int itemsToDrop=0)
         {

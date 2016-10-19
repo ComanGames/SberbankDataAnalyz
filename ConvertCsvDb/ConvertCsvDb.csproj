@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryTools.cs" />
     <Compile Include="DataBaseUtil.cs" />
     <Compile Include="DataFromCsv.cs" />
     <Compile Include="DataWorker.cs" />
@@ -99,8 +100,9 @@
     <None Include="Materials\customers_gender_train.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Materials\transactions.csv" />
-    <None Include="Materials\transactions_cut_500000_lines.csv" />
+    <None Include="Materials\transactions.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Materials\tr_mcc_codes.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

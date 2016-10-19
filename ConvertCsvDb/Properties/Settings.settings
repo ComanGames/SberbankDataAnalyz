@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ConvertCsvDb.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="TransactionFile" Type="System.String" Scope="User">
+    <Setting Name="TransactionsFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Users\coman\OneDrive\Documents\Visual Studio 2015\Projects\SberBankDataAnalyze\ConvertCsvDb\Materials\transactions.csv</Value>
     </Setting>
   </Settings>

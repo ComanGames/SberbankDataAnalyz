@@ -8,8 +8,11 @@ namespace ConvertCsvDb
         public const string MccCodeFile = "tr_mcc_codes.csv";
         public const string TransactionTypeFile = "tr_types.csv";
         public const string CustomerGenderTrainFile = "customers_gender_train.csv";
+        public const string TransactionCutedFile = "transactions_cut_500000_lines.csv";
+        public static string TransactionsFile = "transactions.dat";
+
+        public static string PathToTransactionFileCut =>PathToDateFile(TransactionCutedFile);
         public static string PathToTransactionFile => Properties.Settings.Default.TransactionFile;
-        public const string PathToTransactionFileCut = @"C:\Users\coman\Source\Repos\SberbankDataAnalyz\ConvertCsvDb\Materials\transactions.csv";
 
         public static void MadeCutVersionOfFile(string filePath, int newLineCount)
         {

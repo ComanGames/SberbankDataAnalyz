@@ -28,7 +28,7 @@ namespace ConvertCsvDb
         public static Customer GetCustomerWithGender(string[] csv)
         {
             int bankId = int.Parse(csv[0]);
-            bool gender = bool.Parse(csv[1]);
+            bool gender = byte.Parse(csv[1])==1;
             Customer customer = new Customer(){BankId = bankId,IsMan = gender,GenderKnown =true };
             return customer;
         }
@@ -41,14 +41,25 @@ namespace ConvertCsvDb
             float amount = float.Parse(csv[4]);
             string termId = csv[5];
 
-            string[] splited = transactionTimestring.Split(' ');
-            short day = short.Parse(splited[0]);
-            TimeSpan time = TimeSpan.Parse(splited[1].Replace("60", "59")+".0");
+            string[] splitedDay = transactionTimestring.Split(' ');
+            ushort day = ushort.Parse(splitedDay[0]);
+            string[] splitedTime = splitedDay[1].Split(':');
+            byte hour = byte.Parse(splitedTime[0]);
+            byte minute = byte.Parse(splitedTime[1]);
+            byte seconds = byte.Parse(splitedTime[2]);
 
-
-            //Todo:made good converting
-            throw new NotImplementedException("converting to time to seconds");
-            Transaction transaction = new Transaction(){BankId = bankId,MccCode = mccCode,TransactionType = transcationType,Amount = amount,TimeDay = day,TimeSeconds = 0,TermId = termId};
+            Transaction transaction = new Transaction()
+            {
+                BankId = bankId,
+                MccCode = mccCode,
+                TransactionType = transcationType,
+                Amount = amount,
+                Day = day ,
+                Hour = hour,
+                Minute = minute,
+                Second = seconds,
+                TermId = string.IsNullOrEmpty(termId)?"null":termId
+            };
             return transaction;
         }
     }
