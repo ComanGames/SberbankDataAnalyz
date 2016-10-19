@@ -11,46 +11,47 @@ namespace ConvertCsvDb
             OutputEncoding = Encoding.UTF8;
             CursorVisible = false;
 
-            CsvToDb.LogWriteLine = (text, tabs) =>
+            DataWorker.LogWriteLine = (text, tabs) =>
             {
                 WriteLine($"{new string('\t',tabs)}{text}");
             };
 
-            CsvToDb.LogReWriteLine = (text, tabs) =>
+            DataWorker.LogReWriteLine = (text, tabs) =>
             {
 
                 SetCursorPosition(0, CursorTop-1);
                 WriteLine($"{new  string('\t',tabs)} {text}");
             };
 
-            OperationInfo.LogAction = CsvToDb.LogWriteLine;
-            ProgressCount.LogWriteLine = CsvToDb.LogWriteLine;
-            ProgressCount.LogReWriteLine = CsvToDb.LogReWriteLine;
+            OperationInfo.LogAction = DataWorker.LogWriteLine;
+            ProgressCount.LogWriteLine = DataWorker.LogWriteLine;
+            ProgressCount.LogReWriteLine = DataWorker.LogReWriteLine;
             
 
-            CsvToDb.CoreCount = Environment.ProcessorCount;
-            RealConverting();
+            DataWorker.CoreCount = Environment.ProcessorCount;
+//            RealConverting();
+            DataFromCsv.MadeCutVersionOfFile(DataFromCsv.PathToTransactionFile,500000);
             ReadKey();
 
         }
 
         private static void RealConverting()
         {
-            WriteLine($"Detected {CsvToDb.CoreCount} cores.Done Initialization...");
+            WriteLine($"Detected {DataWorker.CoreCount} cores.Done Initialization...");
             WriteLine();
             WriteLine("Press enter to get data from csv files...");
             WriteLine();
 
             WriteLine("Start converting csv to Db");
 
-            CsvToDb.ConvertAllData();
+            DataWorker.ConvertAllData();
 
             WriteLine("Done converting csv to Db");
             WriteLine();
             WriteLine("If you want to run db test press Enter if not close app");
             ReadKey();
 
-            CsvToDb.TestDbSpeed();
+            DataBaseUtil.TestDbSpeed();
 
         }
     }

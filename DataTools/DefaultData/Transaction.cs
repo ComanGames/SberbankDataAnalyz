@@ -7,11 +7,11 @@ namespace DataTools.DefaultData
     {
         public int Id { get; set; }
         public int BankId { get; set; }
-        public int TimeDay { get; set; }
-        public TimeSpan TimeHours { get; set; }
-        public int MccCode { get; set; }
-        public int TransactionType { get; set; }
-        public double Amount { get; set; }
+        public short TimeDay { get; set; }
+        public int TimeSeconds { get; set; }
+        public short MccCode { get; set; }
+        public short TransactionType { get; set; }
+        public float Amount { get; set; }
         public string TermId { get; set; }
 }
 
