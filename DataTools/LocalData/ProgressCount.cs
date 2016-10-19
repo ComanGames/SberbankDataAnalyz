@@ -4,8 +4,9 @@ namespace DataTools.LocalData
 {
     public class ProgressCount :IDisposable
     {
-        private readonly double _countOfOperations;
-        private double _currentLine;
+        public int CurrentProgress => _oldProcent;
+        private readonly long _countOfOperations;
+        private long _currentLine;
         private int _oldProcent;
         public static Action<string, int> LogWriteLine = (x, y) => { };
         public static Action<string, int> LogReWriteLine = (x, y) => { };
@@ -31,7 +32,7 @@ namespace DataTools.LocalData
         {
             if (IsReadingProgress)
             {
-                int newProcent = (int)(((++_currentLine) / _countOfOperations) * 100);
+                int newProcent = (int)(((++_currentLine) / (double)_countOfOperations) * 100);
                 if (newProcent != _oldProcent)
                 {
                     _oldProcent = newProcent;
@@ -45,7 +46,7 @@ namespace DataTools.LocalData
         {
             if (IsReadingProgress)
             {
-                int newProcent = (int)(((++_currentLine) / _countOfOperations) * 100);
+                int newProcent = (int)(((++_currentLine) / (_countOfOperations) * 100));
                 if (newProcent != _oldProcent)
                 {
                     _oldProcent = newProcent;

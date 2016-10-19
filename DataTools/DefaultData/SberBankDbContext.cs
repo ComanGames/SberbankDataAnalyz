@@ -1,10 +1,14 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 
 namespace DataTools.DefaultData
 {
     public class SberBankDbContext:DbContext
     {
-        public SberBankDbContext():base(Properties.Settings.Default.SberBankCS)
+        public SberBankDbContext()
+            :base( Properties.Settings.Default.UseLocalDb?
+             string.Format(Properties.Settings.Default.LocalDbSberBank, Environment.CurrentDirectory+@"\Materials\")
+            :Properties.Settings.Default.SberBankCS)
         {
 
         }

@@ -9,7 +9,10 @@
       <Value Profile="(Default)">Data Source=sber-bank.database.windows.net;Initial Catalog=SberBankPredictionModelDb;Integrated Security=False;User ID=Yura;Password=Train2brain4;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False</Value>
     </Setting>
     <Setting Name="LocalDbSberBank" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename="C:\Users\coman\OneDrive\Documents\Visual Studio 2015\Projects\SberBankDataAnalyze\DataTools\Materials\LocalDb.mdf";Integrated Security=True</Value>
+      <Value Profile="(Default)">Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename="{0}LocalDb.mdf";Integrated Security=True</Value>
+    </Setting>
+    <Setting Name="UseLocalDb" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

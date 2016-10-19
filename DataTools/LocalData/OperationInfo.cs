@@ -10,7 +10,7 @@ namespace DataTools.LocalData
         private int _tabsCount;
         private Stopwatch _stopwatch;
 
-        public OperationInfo(string opertionText,int tabsCount)
+        public OperationInfo(string opertionText,int tabsCount=0)
         {
             _opertionText = opertionText;
             _tabsCount = tabsCount;

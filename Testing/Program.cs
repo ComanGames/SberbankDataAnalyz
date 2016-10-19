@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using DataTools.DefaultData;
 using DataTools.LocalData;
 
 namespace Testing
@@ -8,17 +10,31 @@ namespace Testing
     {
         static void Main(string[] args)
         {
+
+            Initialization();
+            Customer[] girls;
+            Customer[] boys;
+            Console.WriteLine("Done");
+            Console.ReadKey();
+            Transaction[] unknownGender;
+            using (new OperationInfo("Looking for transactions with unknowne gender"))
+            {
+                unknownGender = LocalData.Transactions.Where(n => (LocalData.Customers.Count(c => c.BankId == n.BankId))>0) .ToArray();
+            }
+            Console.WriteLine(unknownGender.Length);
+            Console.ReadKey();
+        }
+
+
+        private static void Initialization()
+        {
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
 
-            DataWorker.LogWriteLine = (text, tabs) =>
-            {
-                Console.WriteLine($"{new string('\t', tabs)}{text}");
-            };
+            DataWorker.LogWriteLine = (text, tabs) => { Console.WriteLine($"{new string('\t', tabs)}{text}"); };
 
             DataWorker.LogReWriteLine = (text, tabs) =>
             {
-
                 Console.SetCursorPosition(0, Console.CursorTop - 1);
                 Console.WriteLine($"{new string('\t', tabs)} {text}");
             };
@@ -26,10 +42,7 @@ namespace Testing
             OperationInfo.LogAction = DataWorker.LogWriteLine;
             ProgressCount.LogWriteLine = DataWorker.LogWriteLine;
             ProgressCount.LogReWriteLine = DataWorker.LogReWriteLine;
-
-            LocalData.LoadData();
-            DataBaseUtil.AddToDb(LocalData.MccCodes,LocalData.TransactionTypes,LocalData.Customers,LocalData.Transactions);
-            Console.ReadKey();
+            LocalData.Initilize();
         }
 
         private static void ConvertSTringToData()

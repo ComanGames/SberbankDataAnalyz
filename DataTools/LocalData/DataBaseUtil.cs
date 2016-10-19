@@ -11,21 +11,16 @@ namespace DataTools.LocalData
 
         public static void CleanDb()
         {
-            using (SberBankDbContext context = new SberBankDbContext())
+            using (new OperationInfo("Cleaning db..."))
             {
-                using (new OperationInfo("Removing Transactions", 1))
-                    context.TransactionsDbSet.Create();
-
-                using (new OperationInfo("Removing Customers", 1))
-                    context.CustomersDbSet.Create();
-
-                using (new OperationInfo("Removing Mcc", 1))
-                    context.MccCodesDbSet.Create();
-
-                using (new OperationInfo("Removing Transactions types", 1))
-                    context.TransactionTypesDbSet.Create();
-                context.SaveChanges();
-
+                using (SberBankDbContext context = new SberBankDbContext())
+                {
+                    context.Database.ExecuteSqlCommand("TRUNCATE TABLE Transactions");
+                    context.Database.ExecuteSqlCommand("TRUNCATE TABLE MccCodes");
+                    context.Database.ExecuteSqlCommand("TRUNCATE TABLE TransactionTypes");
+                    context.Database.ExecuteSqlCommand("DELETE FROM Customers");
+                    context.Database.ExecuteSqlCommand("DELETE FROM Transactions");
+                }
             }
         }
 
@@ -35,7 +30,6 @@ namespace DataTools.LocalData
             {
                 context.Configuration.AutoDetectChangesEnabled = false;
                 context.Configuration.ValidateOnSaveEnabled = false;
-
                 context.BulkInsert(itemsToDrop != 0 ? transactions.SubArray(startPoint, itemsToDrop) : transactions);
 
             }
@@ -71,6 +65,12 @@ namespace DataTools.LocalData
                 }
             }
 
+        }
+        public static void FillDb(int transacionsCount)
+        {
+            LocalData.LoadData();
+            DataBaseUtil.CleanDb();
+            DataBaseUtil.AddToDb(LocalData.MccCodes, LocalData.TransactionTypes, LocalData.Customers, LocalData.Transactions);
         }
 
         public static void TestDbSpeed()

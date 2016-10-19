@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.IO;
 using DataTools.DefaultData;
 
@@ -15,6 +16,11 @@ namespace DataTools.LocalData
         private static MccCode[] _mccCodes;
         private static Customer[] _customers;
 
+        public static void Initilize()
+        {
+            Database.SetInitializer(new CreateDatabaseIfNotExists<SberBankDbContext>());
+        }
+
         public static string PathToDateFile(string fileName)
         {
             return Path.Combine(Environment.CurrentDirectory, @"Materials\", fileName);
@@ -26,6 +32,11 @@ namespace DataTools.LocalData
             _customers = DataWorker.GetCustomersWithGender(CustomerGenderTrainFile);
             _transactionTypes = DataWorker.GetTransactionTypes(TransactionTypeFile);
             _transactions = DataWorker.GetTransactions(TransactionsFile);
+        }
+
+        public static void UnloadData()
+        {
+            
         }
 
         public static Transaction[] Transactions
