@@ -49,5 +49,19 @@ namespace DataTools.Properties {
                 this["SberBankPreditionModel"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\coman\\OneDrive\\Docu" +
+            "ments\\Visual Studio 2015\\Projects\\SberBankDataAnalyze\\DataTools\\Materials\\LocalD" +
+            "b.mdf\";Integrated Security=True")]
+        public string LocalDbSberBank {
+            get {
+                return ((string)(this["LocalDbSberBank"]));
+            }
+            set {
+                this["LocalDbSberBank"] = value;
+            }
+        }
     }
 }

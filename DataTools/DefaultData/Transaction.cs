@@ -7,6 +7,7 @@ namespace DataTools.DefaultData
     public class Transaction
     {
         public int Id { get; set; }
+        public int CustomerId { get; set; }
         public int BankId { get; set; }
         public ushort Day { get; set; }
         public byte Hour { get; set; }

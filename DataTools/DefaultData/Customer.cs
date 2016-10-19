@@ -1,4 +1,6 @@
-﻿namespace DataTools.DefaultData
+﻿using System.Collections.Generic;
+
+namespace DataTools.DefaultData
 {
     public class Customer
     {
@@ -6,6 +8,6 @@
         public int BankId { get; set; } 
         public bool IsMan { get; set; }
         public bool GenderKnown { get; set; }
-        public Transaction[] Transactions { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }
