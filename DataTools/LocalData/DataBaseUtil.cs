@@ -97,7 +97,7 @@ namespace DataTools.LocalData
 
         public static void CreateDb()
         {
-            using (new OperationInfo("Creating Db and removing old",0))
+            using (new OperationInfo("Creating Db and removing old"))
                 Database.SetInitializer(new DropCreateDatabaseAlways<SberBankDbContext>());
         }
     }

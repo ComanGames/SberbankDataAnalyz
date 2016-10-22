@@ -11,10 +11,13 @@ namespace DataTools.LocalData
         public static string TransactionTypeFile => PathToDateFile( "tr_types.csv");
         public static string CustomerGenderTrainFile => PathToDateFile( "customers_gender_train.csv");
         public static string TransactionsFile => PathToDateFile( "transactions.dat");
+        public static string TerminalsFile => PathToDateFile( "terminals.dat");
+
         private static TransactionType[] _transactionTypes;
         private static Transaction[] _transactions;
         private static MccCode[] _mccCodes;
         private static Customer[] _customers;
+        private static string[] _terminals;
 
         public static void Initilize()
         {
@@ -31,7 +34,8 @@ namespace DataTools.LocalData
             _mccCodes = DataWorker.GetMcc(MccCodeFile);
             _customers = DataWorker.GetCustomersWithGender(CustomerGenderTrainFile);
             _transactionTypes = DataWorker.GetTransactionTypes(TransactionTypeFile);
-            _transactions = DataWorker.GetTransactions(TransactionsFile);
+            _transactions = DataWorker.GetTransactionsBinary(TransactionsFile);
+            _terminals = DataWorker.GetTerminals(TerminalsFile);
         }
 
         public static void UnloadData()
@@ -39,12 +43,21 @@ namespace DataTools.LocalData
             
         }
 
+        public static string[] Terminals 
+        {
+            get
+            {
+                if (_terminals != null) return _terminals;
+                    _terminals = DataWorker.GetTerminals(TerminalsFile);
+                return _terminals;
+            }
+        }
         public static Transaction[] Transactions
         {
             get
             {
                 if (_transactions != null) return _transactions;
-                _transactions = DataWorker.GetTransactions(TransactionsFile);
+                _transactions = DataWorker.GetTransactionsBinary(TransactionsFile);
                 return _transactions;
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using DataTools.DefaultData;
 using DataTools.LocalData;
@@ -10,19 +11,68 @@ namespace Testing
     {
         static void Main(string[] args)
         {
+            CreateCutBinaryFile();
+            Console.WriteLine("MY transactions");
+            Console.WriteLine("Real Transactions");
+            Console.WriteLine();
 
-            Initialization();
-            Customer[] girls;
-            Customer[] boys;
+
             Console.WriteLine("Done");
             Console.ReadKey();
-            Transaction[] unknownGender;
-            using (new OperationInfo("Looking for transactions with unknowne gender"))
+        }
+
+        private static void CreateCutBinaryFile()
+        {
+            Dictionary<string, int> terminals = new Dictionary<string, int>();
+            Dictionary<int, byte> mccCode = new Dictionary<int, byte>();
+            Dictionary<int, byte> trType = new Dictionary<int, byte>();
+            Dictionary<int, short> customers = new Dictionary<int, short>();
+            List<string> terminaslToSave = new List<string>();
+
+            for (int i = 0; i < LocalData.MccCodes.Length; i++)
+                mccCode.Add(LocalData.MccCodes[i].Value, (byte) mccCode.Count);
+
+            for (int i = 0; i < LocalData.TransactionTypes.Length; i++)
+                trType.Add(LocalData.TransactionTypes[i].Value, (byte) trType.Count);
+
+            for (int i = 0; i < LocalData.Customers.Length; i++)
+                customers.Add(LocalData.Customers[i].BankId, (short) customers.Count);
+
+
+            for (int i = 0; i < LocalData.Transactions.Length; i++)
             {
-                unknownGender = LocalData.Transactions.Where(n => (LocalData.Customers.Count(c => c.BankId == n.BankId))>0) .ToArray();
+                Transaction transaction = LocalData.Transactions[i];
+                if (!terminals.ContainsKey(transaction.Terminal))
+                {
+                    transaction.TerminalId = terminaslToSave.Count;
+                    terminals.Add(transaction.Terminal, terminals.Count);
+                    terminaslToSave.Add(transaction.Terminal);
+                }
+                transaction.MccCodeId = mccCode[transaction.MccCode];
+
+                if (customers.ContainsKey(transaction.BankId))
+                    transaction.CustomerId = customers[transaction.BankId];
+                else
+                    transaction.CustomerId = -1;
+
+                if (trType.ContainsKey(transaction.TransactionType))
+                    transaction.TransactionTypeId = trType[transaction.TransactionType];
             }
-            Console.WriteLine(unknownGender.Length);
-            Console.ReadKey();
+
+            List<Transaction> transactionsWithCustomer = new List<Transaction>();
+            int countOfTransactionsWithType = 0;
+            for (int i = 0; i < LocalData.Transactions.Length; i++)
+            {
+                if (LocalData.Transactions[i].CustomerId != -1)
+                    transactionsWithCustomer.Add(LocalData.Transactions[i]);
+                else
+                    countOfTransactionsWithType++;
+            }
+
+            Console.WriteLine($"Transactions Without customer {countOfTransactionsWithType}");
+            BinaryTools.SaveTerminalsToBinary(terminaslToSave.ToArray(),LocalData.TerminalsFile);
+            BinaryTools.SaveTransactionsToBinaryCut(transactionsWithCustomer.ToArray(), LocalData.TransactionTypeFile);
+            Console.WriteLine(terminals.Count);
         }
 
 
@@ -42,7 +92,8 @@ namespace Testing
             OperationInfo.LogAction = DataWorker.LogWriteLine;
             ProgressCount.LogWriteLine = DataWorker.LogWriteLine;
             ProgressCount.LogReWriteLine = DataWorker.LogReWriteLine;
-            LocalData.Initilize();
+            LocalData.LoadData();
+//            LocalData.Initilize();
         }
 
         private static void ConvertSTringToData()

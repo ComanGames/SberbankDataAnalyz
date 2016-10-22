@@ -43,7 +43,7 @@ namespace DataTools.LocalData
                     customers = GetCustomersWithGender(pathToGenderFile);
 
                 using (new OperationInfo($"Reading from {Path.GetFileName(pathToTransactionFile)}", 1))
-                    transactions = GetTransactions(pathToTransactionFile);
+                    transactions = GetTransactionsBinary(pathToTransactionFile);
             }
             Cleaning();
             using (new OperationInfo("Add Data to db",0))
@@ -53,9 +53,14 @@ namespace DataTools.LocalData
 
         }
 
-        public static Transaction[] GetTransactions(string pathToTransactionFile)
+        public static Transaction[] GetTransactionsCSV(string pathToTransactionFile)
         {
-            var transactions = BinaryTools.LoadTransactionsFromBinary(pathToTransactionFile);
+            Transaction[] transactions = DataFromCsv.GetDataFromCsv(',', TypeReader.GetTransaction, @"C:\Users\coman\OneDrive\Desktop\transactions.csv");
+            return transactions;
+        }
+        public static Transaction[] GetTransactionsBinary(string pathToTransactionFile)
+        {
+            Transaction[] transactions = BinaryTools.LoadTransactionsFromBinaryCut(pathToTransactionFile);
             return transactions;
         }
 
@@ -86,6 +91,13 @@ namespace DataTools.LocalData
             }
             LogWriteLine("================================================================", 0);
             LogWriteLine("", 0);
+        }
+
+        public static string[] GetTerminals(string terminalsFile)
+        {
+            string[] terminals = BinaryTools.LoadTerminalsFromBinary(terminalsFile);
+            return terminals;
+
         }
     }
 }

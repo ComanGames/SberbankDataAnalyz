@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTools", "DataTools\Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAnalyzeVisual", "DataAnalyze\DataAnalyzeVisual.csproj", "{82CA0722-D1F5-4C08-AED4-D5AD1D6BED13}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAnalytics", "DataAnalytics\DataAnalytics.csproj", "{F81BB5A7-74BF-4F9F-859A-11FDBC4D6918}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BF667D0-61D8-4AFC-8A96-D0ECA4802DD3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82CA0722-D1F5-4C08-AED4-D5AD1D6BED13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82CA0722-D1F5-4C08-AED4-D5AD1D6BED13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82CA0722-D1F5-4C08-AED4-D5AD1D6BED13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82CA0722-D1F5-4C08-AED4-D5AD1D6BED13}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F81BB5A7-74BF-4F9F-859A-11FDBC4D6918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F81BB5A7-74BF-4F9F-859A-11FDBC4D6918}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F81BB5A7-74BF-4F9F-859A-11FDBC4D6918}.Release|Any CPU.ActiveCfg = Release|Any CPU

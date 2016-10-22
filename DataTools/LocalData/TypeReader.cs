@@ -37,7 +37,7 @@ namespace DataTools.LocalData
             int bankId = int.Parse(csv[0]);
             string transactionTimestring = csv[1];
             short mccCode = short.Parse(csv[2]);
-            short transcationType = short.Parse(csv[3]);
+            int transcationType = int.Parse(csv[3]);
             float amount = float.Parse(csv[4]);
             string termId = csv[5];
 
@@ -58,7 +58,7 @@ namespace DataTools.LocalData
                 Hour = hour,
                 Minute = minute,
                 Second = seconds,
-                TermId = string.IsNullOrEmpty(termId)?"null":termId
+                Terminal = string.IsNullOrEmpty(termId)?"null":termId
             };
             return transaction;
         }
