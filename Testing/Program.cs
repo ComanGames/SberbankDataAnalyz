@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using DataTools.DefaultData;
 using DataTools.LocalData;
@@ -11,11 +10,11 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            CreateCutBinaryFile();
-            Console.WriteLine("MY transactions");
-            Console.WriteLine("Real Transactions");
-            Console.WriteLine();
-
+            Initialization();
+            for (int i = 0; i < 1000; i++)
+            {
+                Console.WriteLine(LocalData.Terminals[i]); 
+            }
 
             Console.WriteLine("Done");
             Console.ReadKey();
@@ -92,8 +91,7 @@ namespace Testing
             OperationInfo.LogAction = DataWorker.LogWriteLine;
             ProgressCount.LogWriteLine = DataWorker.LogWriteLine;
             ProgressCount.LogReWriteLine = DataWorker.LogReWriteLine;
-            LocalData.LoadData();
-//            LocalData.Initilize();
+            LocalData.Initilize();
         }
 
         private static void ConvertSTringToData()

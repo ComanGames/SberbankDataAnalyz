@@ -21,7 +21,7 @@ namespace DataTools.LocalData
             {
 
                 LogWriteLine("", 2);
-                LogWriteLine(" Reading In Progress ", 2);
+                LogWriteLine("Work In Progress ", 2);
 
                 LogWriteLine("", 2);
                 LogWriteLine($"{0}%", 2);
@@ -32,11 +32,11 @@ namespace DataTools.LocalData
         {
             if (IsReadingProgress)
             {
-                int newProcent = (int)(((++_currentLine) / (double)_countOfOperations) * 100);
-                if (newProcent != _oldProcent)
+                int newProcent = (int)(((++_currentLine) / (double)_countOfOperations) * 1000);
+                if (Math.Abs(newProcent - _oldProcent) > 0.001)
                 {
                     _oldProcent = newProcent;
-                    LogReWriteLine($"{newProcent}%", 2);
+                    LogReWriteLine($"{newProcent/10.0}%", 2);
                 }
             }
 
@@ -44,16 +44,7 @@ namespace DataTools.LocalData
 
         public void Dispose()
         {
-            if (IsReadingProgress)
-            {
-                int newProcent = (int)(((++_currentLine) / (_countOfOperations) * 100));
-                if (newProcent != _oldProcent)
-                {
-                    _oldProcent = newProcent;
-                    LogReWriteLine($"{newProcent}%", 2);
-                }
-            }
-
+            Update();
         }
     }
 }

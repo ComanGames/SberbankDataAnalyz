@@ -19,9 +19,12 @@ namespace DataTools.LocalData
         private static Customer[] _customers;
         private static string[] _terminals;
 
-        public static void Initilize()
+        public static void Initialize()
         {
-            Database.SetInitializer(new CreateDatabaseIfNotExists<SberBankDbContext>());
+            using (new OperationInfo("Creating DataBase",1))
+                Database.SetInitializer(new CreateDatabaseIfNotExists<SberBankDbContext>());
+
+            LoadData();
         }
 
         public static string PathToDateFile(string fileName)
@@ -31,16 +34,26 @@ namespace DataTools.LocalData
 
         public static void LoadData()
         {
-            _mccCodes = DataWorker.GetMcc(MccCodeFile);
-            _customers = DataWorker.GetCustomersWithGender(CustomerGenderTrainFile);
-            _transactionTypes = DataWorker.GetTransactionTypes(TransactionTypeFile);
-            _transactions = DataWorker.GetTransactionsBinary(TransactionsFile);
-            _terminals = DataWorker.GetTerminals(TerminalsFile);
+            using (new OperationInfo("Getting Mcc codes"))
+                _mccCodes = DataWorker.GetMcc(MccCodeFile);
+            using (new OperationInfo("Getting Customers"))
+                _customers = DataWorker.GetCustomersWithGender(CustomerGenderTrainFile);
+            using (new OperationInfo("Getting Transaction types"))
+                _transactionTypes = DataWorker.GetTransactionTypes(TransactionTypeFile);
+            using (new OperationInfo("Getting Terminals from binary"))
+                _terminals = DataWorker.GetTerminals(TerminalsFile);
+            using (new OperationInfo("Getting Transactions from binary"))
+                _transactions = DataWorker.GetTransactionsBinary(TransactionsFile);
         }
 
         public static void UnloadData()
         {
-            
+
+            using (new OperationInfo("Cleaning RAM"))
+            {
+                _transactions = null;
+                GC.Collect();
+            }
         }
 
         public static string[] Terminals 

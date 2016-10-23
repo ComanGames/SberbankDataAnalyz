@@ -31,12 +31,6 @@ namespace DataTools.LocalData
             DataWorker.CoreCount = Environment.ProcessorCount;
             BinaryTools.Compression = true;
 
-            Transaction[] transactions;
-            using (new OperationInfo("Loading from binary file", 1))
-            {
-                transactions = BinaryTools.LoadTransactionsFromBinary(LocalData.PathToDateFile(LocalData.TransactionsFile));
-            }
-            Console.WriteLine(transactions.Length);
 
 
 //            CleanDb();

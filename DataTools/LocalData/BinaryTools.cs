@@ -105,15 +105,11 @@ namespace DataTools.LocalData
                 while (stream.Position < stream.Length)
                 {
                         Transaction transaction = new Transaction();
-                        transaction.BankId = br.ReadInt32();
                         transaction.Day = br.ReadUInt16();
                         transaction.Hour = br.ReadByte();
                         transaction.Minute = br.ReadByte();
                         transaction.Second = br.ReadByte();
-                        transaction.MccCode = br.ReadInt16();
-                        transaction.TransactionType = br.ReadInt16();
                         transaction.Amount = br.ReadSingle();
-                        transaction.Terminal = br.ReadString();
                         transactionsList.Add(transaction);
                 }
             }
