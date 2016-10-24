@@ -4,6 +4,9 @@
     {
         TransactionCountToSum,
         SumToCountPerMonth,
-        MoneySpendTotal
+        MoneySpendTotal,
+        TransactionCountToMcc,
+        SumToMcc
+        
     }
 }

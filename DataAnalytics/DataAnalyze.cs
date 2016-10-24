@@ -70,6 +70,12 @@ namespace DataAnalytics
                     case TypeOfChart.MoneySpendTotal:
                         manWomanPoints = ChartTools.MoneySpendTotal();
                     break;
+                    case TypeOfChart.SumToMcc:
+                        manWomanPoints = ChartTools.SumToMcc();
+                    break;
+                    case TypeOfChart.TransactionCountToMcc:
+                        manWomanPoints = ChartTools.TransactionCountToMcc();
+                    break;
                 }
                 series = SetLimits(limits, manWomanPoints, series);
                 OperationInfo.LogAction($"Count Man ={series[0].Points.Count}, Woman ={series[1].Points.Count}", 1);

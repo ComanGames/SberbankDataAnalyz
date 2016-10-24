@@ -1,7 +1,10 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
+using DataTools.DefaultData;
+using DataTools.LocalData;
 
 namespace DataAnalytics
 {
@@ -75,6 +78,67 @@ namespace DataAnalytics
             totalW /= total;
 
             return new[] { new [] {new DataPoint(1, (double) totalM)},new [] {new DataPoint(2,  (double)totalW)} };
+        }
+
+        public static DataPoint[][] SumToMcc()
+        {
+            Dictionary<byte,double> mccDictionaryM = new Dictionary<byte, double>();
+            Dictionary<byte,double> mccDictionaryW = new Dictionary<byte, double>();
+            foreach (Customer customer in LocalData.Customers)
+            {
+                if (customer.IsMan)
+                {
+                    foreach (Transaction transaction in customer.Transactions)
+                        UdateDictionaryValue(mccDictionaryM, transaction,transaction.Amount,(x,y)=> x+y);
+
+                }
+                else
+                {
+                    
+                    foreach (Transaction transaction in customer.Transactions)
+                        UdateDictionaryValue(mccDictionaryW, transaction,transaction.Amount,(x,y)=> x+y);
+                }
+
+            }
+            DataPoint[] mans = (from m in mccDictionaryM select new DataPoint(m.Key, m.Value)).ToArray();
+            DataPoint[] girls = (from m in mccDictionaryW select new DataPoint(m.Key, m.Value)).ToArray();
+
+            return new[] {mans, girls};
+        }
+
+        private static void UdateDictionaryValue<T>(Dictionary<byte, T> mccDictionaryM, Transaction transaction, T toAdd,Func<T,T,T> sum) 
+        {
+            if (!mccDictionaryM.ContainsKey(transaction.MccCodeId))
+                mccDictionaryM.Add(transaction.MccCodeId, toAdd);
+            else
+                mccDictionaryM[transaction.MccCodeId]= sum(mccDictionaryM[transaction.MccCodeId],toAdd);
+        }
+
+        public static DataPoint[][] TransactionCountToMcc()
+        {
+            Dictionary<byte, int> mccDictionaryM = new Dictionary<byte, int>();
+            Dictionary<byte, int> mccDictionaryW = new Dictionary<byte, int>();
+            foreach (Customer customer in LocalData.Customers)
+            {
+                if (customer.IsMan)
+                {
+                    foreach (Transaction transaction in customer.Transactions)
+                        UdateDictionaryValue(mccDictionaryM, transaction,1,(x,y)=> x+y);
+
+                }
+                else
+                {
+
+                    foreach (Transaction transaction in customer.Transactions)
+                        UdateDictionaryValue(mccDictionaryW, transaction,1,(x,y)=>  x+y);
+                }
+
+            }
+            DataPoint[] mans = (from m in mccDictionaryM select new DataPoint(m.Key, m.Value)).ToArray();
+            DataPoint[] girls = (from m in mccDictionaryW select new DataPoint(m.Key, m.Value)).ToArray();
+
+            return new[] { mans, girls };
+
         }
     }
 }
