@@ -60,9 +60,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataAnalytics\DataAnalytics.csproj">
-      <Project>{f81bb5a7-74bf-4f9f-859a-11fdbc4d6918}</Project>
-      <Name>DataAnalytics</Name>
+    <ProjectReference Include="..\DataTools\DataTools.csproj">
+      <Project>{5f5387e4-3177-47b6-928a-72a50b9b8cca}</Project>
+      <Name>DataTools</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

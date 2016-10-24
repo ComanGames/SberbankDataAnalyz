@@ -36,6 +36,7 @@
     <Reference Include="System.Core">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq">
       <Private>True</Private>
@@ -57,8 +58,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChartLimit.cs" />
+    <Compile Include="ChartTools.cs" />
     <Compile Include="DataAnalyze.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeOfChart.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataTools\DataTools.csproj">

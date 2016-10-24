@@ -91,7 +91,7 @@ namespace Testing
             OperationInfo.LogAction = DataWorker.LogWriteLine;
             ProgressCount.LogWriteLine = DataWorker.LogWriteLine;
             ProgressCount.LogReWriteLine = DataWorker.LogReWriteLine;
-            LocalData.Initilize();
+            LocalData.LoadData();
         }
 
         private static void ConvertSTringToData()
